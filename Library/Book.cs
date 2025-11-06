@@ -2,12 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace SharpKnP321.Library
 {
     public class Book : Literature
     {
+        [JsonInclude]
         // auto-property - повністю реалізується автоматично
         public String Author { get; set; } = null!;
 

@@ -1,11 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace SharpKnP321.Library
 {
+    [JsonPolymorphic]
+    [JsonDerivedType(typeof(Book),      typeDiscriminator: "Book")]
+    [JsonDerivedType(typeof(Booklet),   typeDiscriminator: "Booklet")]
+    [JsonDerivedType(typeof(Hologram),  typeDiscriminator: "Hologram")]
+    [JsonDerivedType(typeof(Journal),   typeDiscriminator: "Journal")]
+    [JsonDerivedType(typeof(Newspaper), typeDiscriminator: "Newspaper")]
     public abstract class Literature
     {
         public String Publisher { get; set; } = String.Empty;

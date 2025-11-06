@@ -1,5 +1,7 @@
 ﻿
 using SharpKnP321.Exceptions;
+using SharpKnP321.Extensions;
+using SharpKnP321.Files;
 using SharpKnP321.Library;
 using SharpKnP321.Vectors;
 using System.Reflection;
@@ -9,7 +11,9 @@ using System.Reflection;
 try  // рекомендація - оточувати точку входу блоком try-catch
 {
     Console.OutputEncoding = System.Text.Encoding.Unicode;
-    new ExceptionsDemo().Run();
+    // new ExceptionsDemo().Run();
+    // new FilesDemo().Run();
+    new ExtensionsDemo().Run();
 }
 catch (Exception ex)
 {

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace SharpKnP321.Library
 {
-    internal interface IPeriodic
+    public interface IPeriodic
     {
         String GetPeriod();  // public abstract - за замовчанням
     }
