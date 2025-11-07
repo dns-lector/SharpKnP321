@@ -1,4 +1,5 @@
 ﻿
+using SharpKnP321.Events;
 using SharpKnP321.Exceptions;
 using SharpKnP321.Extensions;
 using SharpKnP321.Files;
@@ -13,7 +14,8 @@ try  // рекомендація - оточувати точку входу бл
     Console.OutputEncoding = System.Text.Encoding.Unicode;
     // new ExceptionsDemo().Run();
     // new FilesDemo().Run();
-    new ExtensionsDemo().Run();
+    // new ExtensionsDemo().Run();
+    new EventsDemo().Run();
 }
 catch (Exception ex)
 {
