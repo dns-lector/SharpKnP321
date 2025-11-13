@@ -174,7 +174,7 @@ namespace SharpKnP321.Files
 
             try
             {
-                using var rfs = new FileStream("./Files/file2.txt", FileMode.Open, FileAccess.Read);
+                using var rfs = new FileStream("./Files/file2.txt", FileMode.Open, FileAccess.Read | FileAccess.Write);
                 byte[] buf = new byte[4096];
                 int n = rfs.Read(buf, 0, 4096);
                 Console.WriteLine(Encoding.UTF8.GetString(buf, 0, n));
