@@ -1,5 +1,6 @@
 ﻿
 using SharpKnP321.Collect;
+using SharpKnP321.Data;
 using SharpKnP321.Dict;
 using SharpKnP321.Events;
 using SharpKnP321.Exceptions;
@@ -20,7 +21,8 @@ try  // рекомендація - оточувати точку входу бл
     // new ExtensionsDemo().Run();
     // new EventsDemo().Run();
     // new CollectionsDemo().Run();
-    new DictDemo().Run();
+    // new DictDemo().Run();
+    new DataDemo().Run();
 }
 catch (Exception ex)
 {
