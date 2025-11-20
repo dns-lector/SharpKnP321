@@ -13,8 +13,28 @@ namespace SharpKnP321.Data
         public void Run()
         {            
             DataAccessor dataAccessor = new();
-            dataAccessor.Install();
-            dataAccessor.Seed();
+            // Console.Write("Кількість продажів за місяць (1-12): ");
+            // String? input = Console.ReadLine();
+            // // int value;
+            // if(int.TryParse(input, out int value))   // side effect - зміна "оточення" - змінних поза тілом ф-ції
+            // {
+            //     try
+            //     {
+            //         Console.WriteLine(dataAccessor.GetSalesCountByMonth(value));
+            //     }
+            //     catch
+            //     {
+            //         Console.WriteLine("Введене значення не було оброблене");
+            //     }
+            // }
+            // else
+            // {
+            //     Console.WriteLine("Введене значення не розпізнано як число");
+            // }
+
+            // dataAccessor.Install();
+            // dataAccessor.Seed();
+            // dataAccessor.FillSales();
 
             // List<Product> products = dataAccessor.GetProducts();
 

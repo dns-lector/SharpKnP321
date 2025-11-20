@@ -26,6 +26,37 @@ namespace SharpKnP321.Data
             }
         }
 
+        public int GetSalesCountByMonth(int month, int year = 2025)
+        {
+            // Параметризовані запити - з відокремленням параметрів від SQL тексту
+            String sql = "SELECT COUNT(*) FROM Sales WHERE Moment BETWEEN @date AND DATEADD(MONTH, 1, @date)";
+            using SqlCommand cmd = new(sql, connection);
+            cmd.Parameters.AddWithValue("@date", new DateTime(year, month, 1));
+            try
+            {            
+                return Convert.ToInt32(cmd.ExecuteScalar());
+            }
+            catch { throw; }
+            /*
+            Д.З. Створити метод, який видає порівняльну характеристику
+            продажів за місяць (що вводиться параметром) на поточний рік 
+            у порівнянні з попереднім роком. Поточний рік визначати з 
+            реальної дати.
+            Для повернення подвійного значення можна використати кортежі
+            public (int, int) GetSalesInfoByMonth(int month)
+            {
+                .......
+                return (1, 2);
+            }
+            ...
+            var (m1, m2) = GetSalesInfoByMonth(1);
+             */
+        }
+        public (int, int) GetSalesInfoByMonth(int month)
+        {
+            return (1, 2);
+        }
+
         public List<Product> GetProducts()
         {
             List<Product> products = [];
@@ -51,6 +82,25 @@ namespace SharpKnP321.Data
             InstallProducts();
             InstallDepartments();
             InstallManagers();
+            InstallSales();
+        }
+        private void InstallSales()
+        {
+            String sql = "CREATE TABLE Sales(" +
+                "Id        UNIQUEIDENTIFIER PRIMARY KEY," +
+                "ManagerId UNIQUEIDENTIFIER NOT NULL," +
+                "ProductId UNIQUEIDENTIFIER NOT NULL," +
+                "Quantity  INT              NOT NULL  DEFAULT 1," +
+                "Moment    DATETIME2        NOT NULL  DEFAULT CURRENT_TIMESTAMP)";
+            using SqlCommand cmd = new(sql, connection);
+            try
+            {
+                cmd.ExecuteNonQuery();   // без зворотнього результату
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Command failed: {0}\n{1}", ex.Message, sql);
+            }
         }
         private void InstallManagers()
         {
@@ -191,6 +241,29 @@ namespace SharpKnP321.Data
             try
             {
                 cmd.ExecuteNonQuery();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Command failed: {0}\n{1}", ex.Message, sql);
+            }
+        }
+        
+        public void FillSales()
+        {
+            String sql = "INSERT INTO Sales(Id, ManagerId, ProductId, Quantity, Moment) VALUES" +
+                "( NEWID(), " +
+                "  ( SELECT TOP 1 Id FROM Managers ORDER BY NEWID() ), " +
+                "  ( SELECT TOP 1 Id FROM Products ORDER BY NEWID() ), " +
+                "  ( SELECT 1 + ABS(CHECKSUM(NEWID())) % 10 ), " +
+                "  ( SELECT DATEADD(MINUTE, ABS(CHECKSUM(NEWID())) % 525600, '2024-01-01') )  " +
+                ")";
+            using SqlCommand cmd = new(sql, connection);
+            try
+            {
+                for (int i = 0; i < 1e5; i++)
+                {
+                    cmd.ExecuteNonQuery();
+                }                
             }
             catch (Exception ex)
             {
