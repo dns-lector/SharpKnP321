@@ -3,6 +3,7 @@ using SharpKnP321.Data.Dto;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Metadata;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -11,6 +12,67 @@ namespace SharpKnP321.Data
     internal class DataDemo
     {
         public void Run()
+        {
+            DataAccessor dataAccessor = new();
+            // Створити метод у DataAccessor, який виводитиме три товари, що 
+            // є лідерами продажів за сьогодні (дата залежить від моменту запуску)
+            // - за кількістю чеків
+            // - за кількістю штук
+            // - за сумою продажів
+            Console.WriteLine("----------ByMoney-----------");
+            foreach (var m in dataAccessor.Top3DailyProducts(CompareMode.ByMoney))
+            {
+                Console.WriteLine(m);
+            }
+            Console.WriteLine("---------ByChecks------------");
+
+            foreach (var m in dataAccessor.Top3DailyProducts(CompareMode.ByChecks))
+            {
+                Console.WriteLine(m);
+            }
+            Console.WriteLine("--------ByQuantity-------------");
+
+            foreach (var m in dataAccessor.Top3DailyProducts(CompareMode.ByQuantity))
+            {
+                Console.WriteLine(m);
+            }
+            Console.WriteLine("---------------------");
+
+            foreach (var s in dataAccessor.EnumSales(10))
+            {
+                Console.WriteLine(s);
+            }
+            List<Sale> sales = [.. dataAccessor.EnumSales(10)];   // spread operator (..)
+        }
+
+        public void Run5()   // генератори - переваги та недоліки
+        {
+            DataAccessor dataAccessor = new();
+            foreach (var dep in dataAccessor.EnumDepartments())
+            {
+                Console.WriteLine(dep);
+
+                // System.InvalidOperationException:
+                // There is already an open DataReader associated with this Connection
+                // which must be closed first.
+                String sql = $"SELECT * FROM Managers M WHERE M.DepartmentId = '{dep.Id}'";
+                using SqlCommand cmd = new(sql, dataAccessor.connection);
+                using SqlDataReader reader = cmd.ExecuteReader();
+                while (reader.Read())
+                {
+                    Console.WriteLine(dataAccessor.FromReader<Manager>(reader));
+                }
+            }
+        }
+
+        private long Fact(uint n)
+        {
+            if (n < 2) return 1;
+            uint m = n - 1;
+            return n * Fact(m);
+        }
+
+        public void Run4()
         {
             DataAccessor dataAccessor = new();
             List<Department> departments = dataAccessor.GetAll<Department>();
@@ -36,7 +98,7 @@ namespace SharpKnP321.Data
                     })
                 .OrderByDescending(item => item.Cnt)
                 .Select(item => String.Format("{0} ({1} empl): {2}", item.Name, item.Cnt, item.Employee))
-            ));            
+            ));
         }
         /* Д.З. Створити сутність Access(Id, ManagerId, Login, Salt, Dk)
          * Реалізувати відповідні методи Install, Seed

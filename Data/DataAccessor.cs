@@ -12,9 +12,47 @@ using System.Threading.Tasks;
 
 namespace SharpKnP321.Data
 {
+    public enum CompareMode
+    {
+        ByChecks,
+        ByQuantity,
+        ByMoney
+    }
+
     internal class DataAccessor
     {
-        private readonly SqlConnection connection;
+        public SqlConnection connection { get; private set; }
+
+        #region About Properties
+        // повністю автоматична
+        public int Prop0 { get; set; }
+
+        // тільки для читання - розрахункові дані на кшталт довжини вектора чи поточного часу
+        public int Prop1 { get => 10; }
+
+        // з різними аксесорами
+        public int Prop3 { get; private set; }
+        public int Prop4 { get; init; }
+
+        // не автоматичнa, а визначенa користувачем
+        private int _prop5;
+        public int Prop5 {
+            get { return _prop5; } 
+            set
+            {
+                if(value != _prop5)   // Prop5 = 10 --> set(value=10)
+                {
+                    _prop5 = value;
+                }
+            } 
+        }
+
+        // тільки для запису - сідування, виведення (запуск процесів через присвоєння)
+        private int _prop2;
+        public int Prop2 { 
+            set { _prop2 = value; } 
+        }
+        #endregion
 
         public DataAccessor()
         {
@@ -29,6 +67,11 @@ namespace SharpKnP321.Data
             {
                 Console.WriteLine("Connection failed: " + ex.Message);
             }
+        }
+
+        public IEnumerable<ProdSaleModel> Top3DailyProducts(CompareMode compareMode)
+        {
+            return null;
         }
 
         public List<SaleModel> MonthlySalesByManagersOrm(int month, int year = 2025)
@@ -113,7 +156,7 @@ namespace SharpKnP321.Data
             return (1, 2);
         }
 
-        private T FromReader<T>(SqlDataReader reader)
+        public T FromReader<T>(SqlDataReader reader)
         {
             // Generic - узагальнене програмування / на заміну шаблонному програмуванню (template)
             var t = typeof(T);                                       // Дані про тип, серед яких конструктори, властивості тощо
@@ -212,6 +255,67 @@ namespace SharpKnP321.Data
                 "SELECT * FROM Departments"
             );
         }
+
+        // варіант з генератором
+        public IEnumerable<Department> EnumDepartments()
+        {
+            // генератори - спосіб одержання результатів "по одному"
+            // без необхідності формування масиву чи колекції
+            // генератори дозволяють одну операцію - одержання наступного елементу
+            // через яку можуть ітеруватись, зокрема циклом foreach
+            String sql = "SELECT * FROM Departments";
+            using SqlCommand cmd = new(sql, connection);
+            SqlDataReader? reader;
+            try { reader = cmd.ExecuteReader(); }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Failed: {0}\n{1}", ex.Message, sql);
+                throw;
+            }
+            while (reader.Read())   // читаємо по одному рядку доки є результати
+            {
+                yield return FromReader<Department>(reader);
+            }
+            reader.Dispose();
+        }
+
+        // Поєднати (за логікою) усі методи-генератори, створити узагальнений
+        // EnumAll<T>(), у т.ч. для News
+
+        public IEnumerable<Sale> EnumSales(int limit = 100)
+        {
+            String sql = "SELECT * FROM Sales ";
+            using SqlCommand cmd = new(sql, connection);
+            SqlDataReader? reader;
+            try { reader = cmd.ExecuteReader(); }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Failed: {0}\n{1}", ex.Message, sql);
+                throw;
+            }
+
+            try
+            {
+                while (reader.Read())   // читаємо по одному рядку доки є результати
+                {
+                    yield return FromReader<Sale>(reader);
+
+                    // код відновлюється з місця, на якому був зупинений, тобто після yield return
+                    limit -= 1;
+                    if (limit == 0)
+                    {
+                        yield break;   // оператор переривання (зупинки) генератора
+                    }
+                }
+            }
+            finally
+            {
+                reader.Dispose();   // ?? Як поведеться reader при закритті за наявності непереданих даних?
+                                    // ! закривається без проблем
+            }
+            
+        }
+
 
         public List<Manager> GetManagers()
         {
