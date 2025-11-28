@@ -8,6 +8,8 @@ namespace SharpKnP321.Events.Delegates
 {
     internal class PriceView
     {
+        private void _Action(double d) { }
+
         private readonly StateListener _listener = (price) =>  // implicit new State...
         {
             Console.WriteLine("PriceView got new price " + price);
@@ -17,6 +19,7 @@ namespace SharpKnP321.Events.Delegates
         {
             Console.WriteLine("PriceView starts with price " + State.Instance.Price);
             State.Instance.AddListener(_listener);
+            State.Instance.AddListener(_Action);
         }
         ~PriceView()
         {
@@ -25,3 +28,5 @@ namespace SharpKnP321.Events.Delegates
 
     }
 }
+/* Д.З. Прикласти посилання на репозиторій з підсумковим проєктом
+ */

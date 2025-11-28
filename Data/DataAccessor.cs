@@ -56,8 +56,8 @@ namespace SharpKnP321.Data
 
         public DataAccessor()
         {
-            String connectionString = @"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\samoylenko_d\Source\Repos\SharpKnP321\Database1.mdf;Integrated Security=True";
-            // String connectionString = @"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\Lector\source\repos\SharpKnP321\Database1.mdf;Integrated Security=True";
+            // String connectionString = @"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\samoylenko_d\Source\Repos\SharpKnP321\Database1.mdf;Integrated Security=True";
+            String connectionString = @"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\Lector\source\repos\SharpKnP321\Database1.mdf;Integrated Security=True";
             this.connection = new(connectionString);
             try
             {
@@ -109,6 +109,9 @@ namespace SharpKnP321.Data
 	            2 DESC
             ";
             using SqlCommand cmd = new(sql, connection);
+            // String str = "Some Garbage";
+            // str = null;
+            // GC.Collect();
             cmd.Parameters.AddWithValue("@date", new DateTime(year, month, 1));
             try
             {
